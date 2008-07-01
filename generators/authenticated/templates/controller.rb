@@ -9,7 +9,7 @@ class <%= controller_class_name %>Controller < ApplicationController
 
   def create
     logout_keeping_session!
-    <%= file_name %> = <%= class_name %>.authenticate(params[:login], params[:password])
+    <%= file_name %> = <%= class_name %>.authenticate(params[:<%= options[:login_field_name] -%>], params[:password])
     if <%= file_name %>
       # Protects against session fixation attacks, causes request forgery
       # protection if user resubmits an earlier form using back

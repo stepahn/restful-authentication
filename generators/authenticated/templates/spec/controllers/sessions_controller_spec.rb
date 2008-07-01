@@ -8,8 +8,8 @@ describe <%= controller_class_name %>Controller do
   fixtures        :<%= table_name %>
   before do 
     @<%= file_name %>  = mock_<%= file_name %>
-    @login_params = { :login => 'quentin', :password => 'test' }
-    <%= class_name %>.stub!(:authenticate).with(@login_params[:login], @login_params[:password]).and_return(@<%= file_name %>)
+    @login_params = { :<%= options[:login_field_name] -%> => 'quentin<%= "@example.com" if options[:email_as_login] -%>', :password => 'test' }
+    <%= class_name %>.stub!(:authenticate).with(@login_params[:<%= options[:login_field_name] -%>], @login_params[:password]).and_return(@<%= file_name %>)
   end
   def do_create
     post :create, @login_params
