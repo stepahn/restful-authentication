@@ -99,6 +99,7 @@ To use:
 
   ./script/generate authenticated user sessions \
     --include-activation \
+		--email-as-login \
     --stateful \
     --rspec \
     --skip-migration \
@@ -115,6 +116,9 @@ To use:
 
 * --include-activation: Generates the code for a ActionMailer and its respective
   Activation Code through email.
+
+* --email-as-login: Uses the "email" field rather than the "login" field to
+  authenticate users
 
 * --stateful: Builds in support for acts_as_state_machine and generates
   activation code.  (@--stateful@ implies @--include-activation@). Based on the
