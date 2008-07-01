@@ -1,10 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + "/lib/insert_routes.rb")
 require 'digest/sha1'
 class AuthenticatedGenerator < Rails::Generator::NamedBase
-  default_options :skip_migration => false,
-                  :skip_routes    => false,
-                  :old_passwords  => false,
-                  :include_activation => false
+  default_options :skip_migration     => false,
+                  :skip_routes        => false,
+                  :old_passwords      => false,
+                  :include_activation => false,
+                  :email_as_login     => false,
+                  :login_field_name   => "login"
 
   attr_reader   :controller_name,
                 :controller_class_path,
@@ -388,6 +390,8 @@ protected
       "Don't generate a migration file for this model")           { |v| options[:skip_migration] = v }
     opt.on("--include-activation",
       "Generate signup 'activation code' confirmation via email") { |v| options[:include_activation] = true }
+    opt.on("--email-as-login",
+      "Use email address as login")                               { |v| options[:email_as_login] = true; options[:login_field_name] = "email" }
     opt.on("--stateful",
       "Use acts_as_state_machine.  Assumes --include-activation") { |v| options[:include_activation] = options[:stateful] = true }
     opt.on("--aasm",

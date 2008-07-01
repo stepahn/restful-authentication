@@ -18,13 +18,13 @@ class <%= controller_class_name %>ControllerTest < Test::Unit::TestCase
   end
 
   def test_should_login_and_redirect
-    post :create, :login => 'quentin', :password => 'monkey'
+    post :create, :<%= options[:login_field_name] -%> => 'quentin<%= "@example.com" if options[:email_as_login] -%>', :password => 'monkey'
     assert session[:<%= file_name %>_id]
     assert_response :redirect
   end
 
   def test_should_fail_login_and_not_redirect
-    post :create, :login => 'quentin', :password => 'bad password'
+    post :create, :<%= options[:login_field_name] -%> => 'quentin<%= "@example.com" if options[:email_as_login] -%>', :password => 'bad password'
     assert_nil session[:<%= file_name %>_id]
     assert_response :success
   end
@@ -38,13 +38,13 @@ class <%= controller_class_name %>ControllerTest < Test::Unit::TestCase
 
   def test_should_remember_me
     @request.cookies["auth_token"] = nil
-    post :create, :login => 'quentin', :password => 'monkey', :remember_me => "1"
+    post :create, :<%= options[:login_field_name] -%> => 'quentin<%= "@example.com" if options[:email_as_login] -%>', :password => 'monkey', :remember_me => "1"
     assert_not_nil @response.cookies["auth_token"]
   end
 
   def test_should_not_remember_me
     @request.cookies["auth_token"] = nil
-    post :create, :login => 'quentin', :password => 'monkey', :remember_me => "0"
+    post :create, :<%= options[:login_field_name] -%> => 'quentin<%= "@example.com" if options[:email_as_login] -%>', :password => 'monkey', :remember_me => "0"
     puts @response.cookies["auth_token"]
     assert @response.cookies["auth_token"].blank?
   end

@@ -1,8 +1,13 @@
 <h1>Log In</h1>
 
 <%% form_tag <%= controller_routing_name %>_path do -%>
+<% if options[:login_as_email] -%>
+<p><label for="email">Email</label><br/>
+<%%= text_field_tag 'email', @email %></p>
+<% else -%>
 <p><label for="login">Login</label><br/>
 <%%= text_field_tag 'login', @login %></p>
+<% end -%>
 
 <p><label for="password">Password</label><br/>
 <%%= password_field_tag 'password', nil %></p>

@@ -28,7 +28,7 @@ module AuthenticatedSystem
     #
     #  # only allow nonbobs
     #  def authorized?
-    #    current_<%= file_name %>.login != "bob"
+    #    current_<%= file_name %>.<%= options[:login_field_name] -%> != "bob"
     #  end
     #
     def authorized?(action=nil, resource=nil, *args)
