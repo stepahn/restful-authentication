@@ -99,7 +99,7 @@ To use:
 
   ./script/generate authenticated user sessions \
     --include-activation \
-		--email-as-login \
+    --email-as-login \
     --stateful \
     --rspec \
     --skip-migration \
