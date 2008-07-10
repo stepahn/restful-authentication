@@ -415,7 +415,7 @@ protected
     opt.on("--include-activation",
       "Generate signup 'activation code' confirmation via email") { |v| options[:include_activation] = true }
     opt.on("--include-forgot-password",
-      "Generate forgot my password support ")                     { |v| options[:include_forgot_password] = true }
+      "Generate forgot my password support")                     { |v| options[:include_forgot_password] = true }
     opt.on("--email-as-login",
       "Use email address as login")                               { |v| options[:email_as_login] = true; options[:login_field_name] = "email" }
     opt.on("--stateful",
