@@ -64,12 +64,12 @@ describe <%= model_controller_class_name %>Controller do
   
   <% if options[:include_activation] %>
   it 'activates user' do
-    <%= class_name %>.authenticate('aaron', 'monkey').should be_nil
+    <%= class_name %>.authenticate('<%= options[:email_as_login] ? "aaron@example.com" : "aaron" %>', 'monkey').should be_nil
     get :activate, :activation_code => <%= table_name %>(:aaron).activation_code
     response.should redirect_to('/login')
     flash[:notice].should_not be_nil
     flash[:error ].should     be_nil
-    <%= class_name %>.authenticate('aaron', 'monkey').should == <%= table_name %>(:aaron)
+    <%= class_name %>.authenticate('<%= options[:email_as_login] ? "aaron@example.com" : "aaron" %>', 'monkey').should == <%= table_name %>(:aaron)
   end
   
   it 'does not activate user without key' do
