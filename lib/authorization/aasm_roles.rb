@@ -50,6 +50,7 @@ module Authorization
       def recently_activated?
         @activated
       end
+
       def do_delete
         self.deleted_at = Time.now.utc
       end

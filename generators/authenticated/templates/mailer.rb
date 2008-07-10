@@ -13,7 +13,15 @@ class <%= class_name %>Mailer < ActionMailer::Base
     @subject    += 'Your account has been activated!'
     @body[:url]  = "http://YOURSITE/"
   end
-  
+
+<% if options[:include_forgot_password] -%>
+  def reset_password(<%= file_name %>)
+    setup_email(<%= file_name %>)
+    @subject    += 'Did you forget your password?'
+    @body[:url]  = "http://YOURSITE/reset/#{<%= file_name %>.reset_code}"
+  end
+<% end -%>
+
   protected
     def setup_email(<%= file_name %>)
       @recipients  = "#{<%= file_name %>.email}"

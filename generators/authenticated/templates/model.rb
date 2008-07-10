@@ -49,6 +49,22 @@ class <%= class_name %> < ActiveRecord::Base
     activation_code.nil?
   end<% end %>
 
+<% if options[:include_forgot_password] %>
+  def clear_reset_code!
+    self.reset_code = nil
+    save(false)
+  end
+  
+  def recently_reset_password?
+    @reset_code_set
+  end
+  
+  def make_reset_code!
+    @reset_code_set = true
+    self.reset_code = self.class.make_token
+    save(false)
+  end<% end %>
+
   # Authenticates a user by their <%= options[:email_as_login] ? "email address" : "login name" -%> and unencrypted password.  Returns the user or nil.
   #
   # uff.  this is really an authorization, not authentication routine.  
