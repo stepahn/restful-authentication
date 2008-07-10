@@ -14,6 +14,8 @@ class <%= migration_name %> < ActiveRecord::Migration
 <% if options[:include_activation] -%>
       t.column :activation_code,           :string, :limit => 40
       t.column :activated_at,              :datetime<% end %>
+<% if options[:include_forgot_password] -%>
+      t.column :reset_code,                :string, :limit => 40<% end %>
 <% if options[:stateful] -%>
       t.column :state,                     :string, :null => :no, :default => 'passive'
       t.column :deleted_at,                :datetime<% end %>
