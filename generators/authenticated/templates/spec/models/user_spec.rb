@@ -34,10 +34,11 @@ describe <%= class_name %> do
     end
 <% end %>  end
 
-  #              
+  #
   # Validations
   #
- 
+  
+<% unless options[:email_as_login] %>
   it 'requires login' do
     lambda do
       u = create_<%= file_name %>(:login => nil)
@@ -68,6 +69,7 @@ describe <%= class_name %> do
       end
     end
   end
+<% end %>
 
   it 'requires password' do
     lambda do
@@ -147,12 +149,16 @@ describe <%= class_name %> do
 
   it 'resets password' do
     <%= table_name %>(:quentin).update_attributes(:password => 'new password', :password_confirmation => 'new password')
-    <%= class_name %>.authenticate('quentin', 'new password').should == <%= table_name %>(:quentin)
+    <%= class_name %>.authenticate('<%= options[:email_as_login] ? "quentin@example.com" : "quentin" %>', 'new password').should == <%= table_name %>(:quentin)
   end
 
   it 'does not rehash password' do
+<% if options[:email_as_login] %>
+    <%= table_name %>(:quentin).update_attributes(:email => 'quentin2@example.com')
+<% else %>
     <%= table_name %>(:quentin).update_attributes(:login => 'quentin2')
-    <%= class_name %>.authenticate('quentin2', 'monkey').should == <%= table_name %>(:quentin)
+<% end %>
+    <%= class_name %>.authenticate('<%= options[:email_as_login] ? "quentin2@example.com" : "quentin2" %>', 'monkey').should == <%= table_name %>(:quentin)
   end
 
   #
@@ -160,11 +166,11 @@ describe <%= class_name %> do
   #
 
   it 'authenticates <%= file_name %>' do
-    <%= class_name %>.authenticate('quentin', 'monkey').should == <%= table_name %>(:quentin)
+    <%= class_name %>.authenticate('<%= options[:email_as_login] ? "quentin@example.com" : "quentin" %>', 'monkey').should == <%= table_name %>(:quentin)
   end
 
   it "doesn't authenticates <%= file_name %> with bad password" do
-    <%= class_name %>.authenticate('quentin', 'monkey').should == <%= table_name %>(:quentin)
+    <%= class_name %>.authenticate('<%= options[:email_as_login] ? "quentin@example.com" : "quentin" %>', 'monkey').should == <%= table_name %>(:quentin)
   end
 
  if REST_AUTH_SITE_KEY.blank? 
@@ -181,7 +187,7 @@ describe <%= class_name %> do
    desired_encryption_expensiveness_ms = 0.1
    it "takes longer than #{desired_encryption_expensiveness_ms}ms to encrypt a password" do
      test_reps = 100
-     start_time = Time.now; test_reps.times{ <%= class_name %>.authenticate('quentin', 'monkey'+rand.to_s) }; end_time   = Time.now
+     start_time = Time.now; test_reps.times{ <%= class_name %>.authenticate('<%= options[:email_as_login] ? "quentin@example.com" : "quentin" %>', 'monkey'+rand.to_s) }; end_time   = Time.now
      auth_time_ms = 1000 * (end_time - start_time)/test_reps
      auth_time_ms.should > desired_encryption_expensiveness_ms
    end
@@ -245,7 +251,7 @@ describe <%= class_name %> do
 
   it 'does not authenticate suspended <%= file_name %>' do
     <%= table_name %>(:quentin).suspend!
-    <%= class_name %>.authenticate('quentin', 'monkey').should_not == <%= table_name %>(:quentin)
+    <%= class_name %>.authenticate('<%= options[:email_as_login] ? "quentin@example.com" : "quentin" %>', 'monkey').should_not == <%= table_name %>(:quentin)
   end
 
   it 'deletes <%= file_name %>' do
