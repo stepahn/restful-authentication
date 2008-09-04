@@ -20,10 +20,10 @@ module <%= model_controller_class_name %>Helper
   #
   # Link to user's page ('<%= table_name %>/1')
   #
-  # By default, their login is used as link text and link title (tooltip)
+  # By default, their <%= options[:login_field_name] -%> is used as link text and link title (tooltip)
   #
   # Takes options
-  # * :content_text => 'Content text in place of <%= file_name %>.login', escaped with
+  # * :content_text => 'Content text in place of <%= file_name %>.<%= options[:login_field_name] -%>', escaped with
   #   the standard h() function.
   # * :content_method => :<%= file_name %>_instance_method_to_call_for_content_text
   # * :title_method => :<%= file_name %>_instance_method_to_call_for_title_attribute
@@ -35,7 +35,7 @@ module <%= model_controller_class_name %>Helper
   #
   #   # if you've added a .name attribute:
   #  content_tag :span, :class => :vcard do
-  #    (link_to_<%= file_name %> <%= file_name %>, :class => 'fn n', :title_method => :login, :content_method => :name) +
+  #    (link_to_<%= file_name %> <%= file_name %>, :class => 'fn n', :title_method => :<%= options[:login_field_name] -%>, :content_method => :name) +
   #          ': ' + (content_tag :span, <%= file_name %>.email, :class => 'email')
   #   end
   #   # => <span class="vcard"><a href="/<%= table_name %>/3" title="barmy" class="fn n">Cyril Fotheringay-Phipps</a>: <span class="email">barmy@blandings.com</span></span>
@@ -45,7 +45,7 @@ module <%= model_controller_class_name %>Helper
   #
   def link_to_<%= file_name %>(<%= file_name %>, options={})
     raise "Invalid <%= file_name %>" unless <%= file_name %>
-    options.reverse_merge! :content_method => :login, :title_method => :login, :class => :nickname
+    options.reverse_merge! :content_method => :<%= options[:login_field_name] -%>, :title_method => :<%= options[:login_field_name] -%>, :class => :nickname
     content_text      = options.delete(:content_text)
     content_text    ||= <%= file_name %>.send(options.delete(:content_method))
     options[:title] ||= <%= file_name %>.send(options.delete(:title_method))

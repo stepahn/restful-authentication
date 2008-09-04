@@ -52,6 +52,38 @@ class <%= model_controller_class_name %>Controller < ApplicationController
       redirect_back_or_default('/')
     end
   end
+<% end %><% if options[:include_forgot_password] %>
+  def forgot
+    if request.post?
+      <%= file_name %> = <%= class_name %>.find_by_email(params[:<%= file_name %>][:email]) unless params[:<%= file_name %>][:email].blank?
+      case
+      when (!params[:<%= file_name %>][:email].blank?) && <%= file_name %> && <%= file_name %>.active?
+        <%= file_name %>.make_reset_code!
+        flash[:notice] = "A password reset link was sent to #{<%= file_name %>.email}"
+        redirect_back_or_default('/')
+      when params[:<%= file_name %>][:email].blank?
+        flash[:error] = "The email address was missing.  Please enter your email address."
+        redirect_back_or_default('/')
+      else
+        flash[:error] = "We couldn't find a <%= file_name %> with the email address, '#{params[:<%= file_name %>][:email]}' or the <%= file_name %> is suspended, deleted, or not activated."
+        redirect_back_or_default('/')
+      end
+    end
+  end
+
+  def reset
+    if request.post?
+      @<%= file_name %> = <%= class_name %>.find_by_email_and_reset_code(params[:<%= file_name %>][:email], params[:reset_code])
+      if @<%= file_name %>.update_attributes(:password => params[:<%= file_name %>][:password], :password_confirmation => params[:<%= file_name %>][:password_confirmation])
+        @<%= file_name %>.clear_reset_code!
+        self.current_user = @<%= file_name %>
+        flash[:notice] = "Password reset successfully for #{@<%= file_name %>.email}"
+        redirect_back_or_default("/")
+      else
+        render :action => :reset
+      end
+    end
+  end
 <% end %><% if options[:stateful] %>
   def suspend
     @<%= file_name %>.suspend! 

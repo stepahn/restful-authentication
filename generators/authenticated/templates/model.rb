@@ -8,11 +8,12 @@ class <%= class_name %> < ActiveRecord::Base
   include Authorization::AasmRoles
 <% elsif options[:stateful] -%>
   include Authorization::StatefulRoles<% end %>
+<% unless options[:email_as_login] -%>
   validates_presence_of     :login
   validates_length_of       :login,    :within => 3..40
   validates_uniqueness_of   :login
   validates_format_of       :login,    :with => Authentication.login_regex, :message => Authentication.bad_login_message
-
+<%- end -%>
   validates_format_of       :name,     :with => Authentication.name_regex,  :message => Authentication.bad_name_message, :allow_nil => true
   validates_length_of       :name,     :maximum => 100
 
@@ -26,7 +27,7 @@ class <%= class_name %> < ActiveRecord::Base
   # HACK HACK HACK -- how to do attr_accessible from here?
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible :login, :email, :name, :password, :password_confirmation
+  attr_accessible <% unless options[:email_as_login] -%>:login, <% end -%>:email, :name, :password, :password_confirmation
 
 <% if options[:include_activation] && !options[:stateful] %>
   # Activates the user in the database.
@@ -47,19 +48,35 @@ class <%= class_name %> < ActiveRecord::Base
     activation_code.nil?
   end<% end %>
 
-  # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
+<% if options[:include_forgot_password] %>
+  def clear_reset_code!
+    self.reset_code = nil
+    save(false)
+  end
+  
+  def recently_reset_password?
+    @reset_code_set
+  end
+  
+  def make_reset_code!
+    @reset_code_set = true
+    self.reset_code = self.class.make_token
+    save(false)
+  end<% end %>
+
+  # Authenticates a user by their <%= options[:email_as_login] ? "email address" : "login name" -%> and unencrypted password.  Returns the user or nil.
   #
   # uff.  this is really an authorization, not authentication routine.  
   # We really need a Dispatch Chain here or something.
   # This will also let us return a human error message.
   #
-  def self.authenticate(login, password)
-    return nil if login.blank? || password.blank?
-    u = <% if    options[:stateful]           %>find_in_state :first, :active, :conditions => {:login => login}<%
-           elsif options[:include_activation] %>find :first, :conditions => ['login = ? and activated_at IS NOT NULL', login]<%
-           else %>find_by_login(login)<% end %> # need to get the salt
-    u && u.authenticated?(password) ? u : nil
-  end
+def self.authenticate(<%= options[:login_field_name] -%>, password)
+  return nil if login.blank? || password.blank?
+     u = <% if    options[:stateful]           %>find_in_state :first, :active, :conditions => {:<%= options[:login_field_name] -%> => <%= options[:login_field_name] -%>}<%
+          elsif options[:include_activation] %>find :first, :conditions => ['<%= options[:login_field_name] -%> = ? and activated_at IS NOT NULL', login]<%
+          else %>find_by_<%= options[:login_field_name] -%>(<%= options[:login_field_name] -%>)<% end %> # need to get the salt
+  u && u.authenticated?(password) ? u : nil
+end
 
   def login=(value)
     write_attribute :login, (value ? value.downcase : nil)

@@ -3,8 +3,10 @@
 
 <%%= error_messages_for :<%= file_name %> %>
 <%% form_for :<%= file_name %>, :url => <%= model_controller_routing_name %>_path do |f| -%>
+<% unless options[:email_as_login] -%>
 <p><%%= label_tag 'login' %><br/>
 <%%= f.text_field :login %></p>
+<% end -%>
 
 <p><%%= label_tag 'email' %><br/>
 <%%= f.text_field :email %></p>

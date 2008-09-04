@@ -4,8 +4,11 @@ class <%= class_name %>Observer < ActiveRecord::Observer
   end
 
   def after_save(<%= file_name %>)
-  <% if options[:include_activation] %>
+  <% if options[:include_activation] -%>
     <%= class_name %>Mailer.deliver_activation(<%= file_name %>) if <%= file_name %>.recently_activated?
-  <% end %>
+  <% end -%>
+  <% if options[:include_forgot_password] -%>
+    <%= class_name %>Mailer.deliver_reset_password(<%= file_name %>) if <%= file_name %>.recently_reset_password?
+  <% end -%>
   end
 end

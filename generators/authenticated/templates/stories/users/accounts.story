@@ -16,20 +16,28 @@ Story: Creating an account
     When  she goes to /signup
     Then  she should be at the '<%= model_controller_routing_path %>/new' page
      And  the page should look AWESOME
-     And  she should see a <form> containing a textfield: Login, textfield: Email, password: Password, password: 'Confirm Password', submit: 'Sign up'
+     And  she should see a <form> containing a <% unless options[:email_as_login] -%>textfield: Login, <% end -%>textfield: Email, password: Password, password: 'Confirm Password', submit: 'Sign up'
 
   #
   # Account Creation
   #
   Scenario: Anonymous <%= file_name %> can create an account
     Given an anonymous <%= file_name %>
+<% unless options[:email_as_login] -%>
      And  no <%= file_name %> with login: 'Oona' exists
+<% else %>
+		 And  no <%= file_name %> with email: 'unactivated@example.com' exists
+<% end %>
     When  she registers an account as the preloaded 'Oona'
     Then  she should be redirected to the home page
     When  she follows that redirect!
     Then  she should see a notice message 'Thanks for signing up!'
+<% unless options[:email_as_login] -%>
      And  a <%= file_name %> with login: 'oona' should exist
      And  the <%= file_name %> should have login: 'oona', and email: 'unactivated@example.com'
+<% else %>
+		 And  a <%= file_name %> with email: 'unactivated@example.com' should exist
+<% end %>
 <% if options[:include_activation] %>
      And  the <%= file_name %>'s activation_code should not be nil
      And  the <%= file_name %>'s activated_at    should     be nil

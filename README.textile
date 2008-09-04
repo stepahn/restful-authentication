@@ -7,6 +7,7 @@ authentication:
 * Account activation by validating email
 * Account approval / disabling by admin
 * Rudimentary hooks for authorization and access control.
+* Forgot my password functionality with emailed reset code and password change
 
 Several features were updated in May, 2008.  
 * "Stable newer version":http://github.com/technoweenie/restful-authentication/tree/master 
@@ -119,6 +120,8 @@ To use the generator:
 
   ./script/generate authenticated user sessions \
     --include-activation \
+    --include-forgot-password \
+    --email-as-login \
     --stateful \
     --rspec \
     --skip-migration \
@@ -135,6 +138,15 @@ To use the generator:
 
 * --include-activation: Generates the code for a ActionMailer and its respective
   Activation Code through email.
+
+* --include-activation: Generates the code for "forgot my password" functionality. 
+  A user clicks on a link to a forgot my password page where he/she can enter his/her
+  email address. An email with a reset code (similar to an activation code) will be
+  sent to the user in a url. The url will bring the user to a page with a form asking
+  for an email address and a new password (with confirmation).
+
+* --email-as-login: Uses the "email" field rather than the "login" field to
+  authenticate users
 
 * --stateful: Builds in support for acts_as_state_machine and generates
   activation code.  (@--stateful@ implies @--include-activation@). Based on the
@@ -206,7 +218,11 @@ alter to suit. There are additional security minutae in @notes/README-Tradeoffs@
     </code></pre>
 
 
-* With @--stateful@, add an observer to config/environment.rb:
+* With @--include-forgot-password@, needs the same observer in @config/environment.rb@:
+	<pre><code>
+    config.active_record.observers = :users_observer
+	</code></pre>
+* With @--stateful@, also needs an observer in config/environment.rb:
   
     <pre><code> 
     config.active_record.observers = :user_observer

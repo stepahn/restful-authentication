@@ -6,7 +6,7 @@ describe "<%= model_controller_class_name %>Helper.link_to_<%= file_name %>" do
   before do
     @<%= file_name %> = <%= class_name %>.new({
         :name  => '<%= class_name %> Name',
-        :login => '<%= file_name %>_name',
+        :<%= options[:login_field_name] -%> => '<%= file_name %>_name',
       })
     @<%= file_name %>.id = 1 # set non-attr_accessible specifically
   end
@@ -23,7 +23,7 @@ describe "<%= model_controller_class_name %>Helper.link_to_<%= file_name %>" do
     link_to_<%= file_name %>(@<%= file_name %>, :content_text => 'Hello there!').should have_tag("a", 'Hello there!')
   end
 
-  it "should use the login as link text with no :content_method specified" do
+  it "should use the <%= options[:login_field_name] -%> as link text with no :content_method specified" do
     link_to_<%= file_name %>(@<%= file_name %>).should have_tag("a", '<%= file_name %>_name')
   end
 
@@ -31,7 +31,7 @@ describe "<%= model_controller_class_name %>Helper.link_to_<%= file_name %>" do
     link_to_<%= file_name %>(@<%= file_name %>, :content_method => :name).should have_tag("a", '<%= class_name %> Name')
   end
 
-  it "should use the login as title with no :title_method specified" do
+  it "should use the <%= options[:login_field_name] -%> as title with no :title_method specified" do
     link_to_<%= file_name %>(@<%= file_name %>).should have_tag("a[title='<%= file_name %>_name']")
   end
 
@@ -62,7 +62,7 @@ describe "<%= model_controller_class_name %>Helper.link_to_signin_with_IP" do
     link_to_signin_with_IP(:content_text => 'Hello there!').should have_tag("a", 'Hello there!')
   end
 
-  it "should use the login as link text with no :content_method specified" do
+  it "should use the <%= options[:login_field_name] -%> as link text with no :content_method specified" do
     link_to_signin_with_IP().should have_tag("a", '0.0.0.0')
   end
 
@@ -96,7 +96,7 @@ describe "<%= model_controller_class_name %>Helper.link_to_current_<%= file_name
     link_to_current_user(:content_text => 'Hello there!').should have_tag("a", 'Hello there!')
   end
 
-  it "should use the login as link text with no :content_method specified" do
+  it "should use the <%= options[:login_field_name] -%> as link text with no :content_method specified" do
     link_to_current_user().should have_tag("a", 'quentin')
   end
 
@@ -104,7 +104,7 @@ describe "<%= model_controller_class_name %>Helper.link_to_current_<%= file_name
     link_to_current_user(:content_method => :name).should have_tag("a", 'Quentin')
   end
 
-  it "should use the login as title with no :title_method specified" do
+  it "should use the <%= options[:login_field_name] -%> as title with no :title_method specified" do
     link_to_current_user().should have_tag("a[title='quentin']")
   end
 

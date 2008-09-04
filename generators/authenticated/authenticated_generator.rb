@@ -1,10 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + "/lib/insert_routes.rb")
 require 'digest/sha1'
 class AuthenticatedGenerator < Rails::Generator::NamedBase
-  default_options :skip_migration => false,
-                  :skip_routes    => false,
-                  :old_passwords  => false,
-                  :include_activation => false
+  default_options :skip_migration          => false,
+                  :skip_routes             => false,
+                  :old_passwords           => false,
+                  :include_activation      => false,
+                  :include_forgot_password => false,
+                  :email_as_login          => false,
+                  :login_field_name        => "login"
 
   attr_reader   :controller_name,
                 :controller_class_path,
@@ -238,6 +241,16 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
         end
       end
 
+      if options[:include_forgot_password]
+        m.template 'forgot.html.erb',  File.join('app/views', model_controller_class_path, model_controller_file_name, "forgot.html.erb")
+        m.template 'reset.html.erb',  File.join('app/views', model_controller_class_path, model_controller_file_name, "reset.html.erb")
+        # Mailer templates
+        %w( reset_password ).each do |action|
+          m.template "#{action}.html.erb",
+                     File.join('app/views', "#{file_name}_mailer", "#{action}.html.erb")
+        end
+      end
+
       unless options[:skip_migration]
         m.migration_template 'migration.rb', 'db/migrate', :assigns => {
           :migration_name => "Create#{class_name.pluralize.gsub(/::/, '')}"
@@ -251,6 +264,13 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
         m.route_name('register', '/register', {:controller => model_controller_plural_name, :action => 'create'})
         m.route_name('login',    '/login',    {:controller => controller_controller_name, :action => 'new'})
         m.route_name('logout',   '/logout',   {:controller => controller_controller_name, :action => 'destroy'})
+        if options[:include_activation]
+          m.route_name('activate', '/activate/:activation_code', {:controller => model_controller_plural_name, :action => 'activate', :activation_code => nil})
+        end
+        if options[:include_forgot_password]
+          m.route_name('reset', '/reset/:reset_code', {:controller => model_controller_plural_name, :action => 'reset', :reset_code => nil})
+          m.route_name('forgot', '/forgot', {:controller => model_controller_plural_name, :action => 'forgot'})
+        end
       end
     end
 
@@ -276,12 +296,18 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
         puts "- Install the acts_as_state_machine plugin:"
         puts "    svn export http://elitists.textdriven.com/svn/plugins/acts_as_state_machine/trunk vendor/plugins/acts_as_state_machine"
       end
-      puts "- Add routes to these resources. In config/routes.rb, insert routes like:"
-      puts %(    map.signup '/signup', :controller => '#{model_controller_file_name}', :action => 'new')
-      puts %(    map.login  '/login',  :controller => '#{controller_file_name}', :action => 'new')
-      puts %(    map.logout '/logout', :controller => '#{controller_file_name}', :action => 'destroy')
-      if options[:include_activation]
-        puts %(    map.activate '/activate/:activation_code', :controller => '#{model_controller_file_name}', :action => 'activate', :activation_code => nil)
+      if options[:skip_routes]
+        puts "- Add routes to these resources. In config/routes.rb, insert routes like:"
+        puts %(    map.signup '/signup', :controller => '#{model_controller_file_name}', :action => 'new')
+        puts %(    map.login  '/login',  :controller => '#{controller_file_name}', :action => 'new')
+        puts %(    map.logout '/logout', :controller => '#{controller_file_name}', :action => 'destroy')
+        if options[:include_activation]
+          puts %(    map.activate '/activate/:activation_code', :controller => '#{model_controller_file_name}', :action => 'activate', :activation_code => nil)
+        end
+        if options[:include_forgot_password]
+          puts %(    map.forgot '/forgot', :controller => 'users', :action => 'forgot')
+          puts %(    map.reset 'reset/:reset_code', :controller => 'users', :action => 'reset', :reset_code => nil)
+        end
       end
       if options[:stateful]
         puts  "  and modify the map.resources :#{model_controller_file_name} line to include these actions:"
@@ -388,8 +414,12 @@ protected
       "Don't generate a migration file for this model")           { |v| options[:skip_migration] = v }
     opt.on("--include-activation",
       "Generate signup 'activation code' confirmation via email") { |v| options[:include_activation] = true }
+    opt.on("--include-forgot-password",
+      "Generate forgot my password support")                     { |v| options[:include_forgot_password] = true }
+    opt.on("--email-as-login",
+      "Use email address as login")                               { |v| options[:email_as_login] = true; options[:login_field_name] = "email" }
     opt.on("--stateful",
-      "Use acts_as_state_machine.  Assumes --include-activation") { |v| options[:include_activation] = options[:stateful] = true }
+      "Use acts_as_state_machine.  Assumes --include-activation and --include-forgot-password") { |v| options[:include_activation] = options[:stateful] = true }
     opt.on("--aasm",
       "Use (gem) aasm.  Assumes --include-activation")            { |v| options[:include_activation] = options[:stateful] = options[:aasm] = true }
     opt.on("--rspec",
