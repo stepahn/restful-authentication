@@ -1,11 +1,19 @@
 class <%= model_controller_class_name %>Controller < ApplicationController
-  # Be sure to include AuthenticationSystem in Application Controller instead
+  # Be sure to include AuthenticationSystem and localizate in Application Controller instead
   include AuthenticatedSystem
   <% if options[:stateful] %>
   # Protect these actions behind an admin login
   # before_filter :admin_required, :only => [:suspend, :unsuspend, :destroy, :purge]
-  before_filter :find_<%= file_name %>, :only => [:suspend, :unsuspend, :destroy, :purge]
+  before_filter :localizate, :find_<%= file_name %>, :only => [:suspend, :unsuspend, :destroy, :purge]
+  <% else %>
+  before_filter :localizate
   <% end %>
+  
+  def localizate
+    locale = params[:locale] || 'en-US'
+    I18n.locale = locale
+    I18n.load_path = "config/locales/#{locale}.yml"
+  end
 
   # render new.rhtml
   def new

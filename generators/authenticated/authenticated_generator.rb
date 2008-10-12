@@ -96,6 +96,7 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
       m.directory File.join('app/helpers', model_controller_class_path)
       m.directory File.join('app/views', model_controller_class_path, model_controller_file_name)
       m.directory File.join('config/initializers')
+      m.directory File.join('config/locales')
 
       if @rspec
         m.directory File.join('spec/controllers', controller_class_path)
@@ -223,6 +224,11 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
                   File.join('app/helpers',
                             model_controller_class_path,
                             "#{model_controller_file_name}_helper.rb")
+                            
+      m.template 'en-US.yml',
+                  File.join('config',
+                            'locales',
+                            'en-US.yml')
 
 
       # Controller templates
