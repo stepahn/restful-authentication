@@ -1,7 +1,7 @@
 class <%= class_name %>Mailer < ActionMailer::Base
   def signup_notification(<%= file_name %>)
     setup_email(<%= file_name %>)
-    @subject    += 'Please activate your new account'
+    @subject    += I18n.t(:activation_required_email_subject)
   <% if options[:include_activation] %>
     @body[:url]  = "http://YOURSITE/activate/#{<%= file_name %>.activation_code}"
   <% else %>
@@ -10,7 +10,7 @@ class <%= class_name %>Mailer < ActionMailer::Base
   
   def activation(<%= file_name %>)
     setup_email(<%= file_name %>)
-    @subject    += 'Your account has been activated!'
+    @subject    += I18n.t(:activation_complete_email_subject)
     @body[:url]  = "http://YOURSITE/"
   end
   
