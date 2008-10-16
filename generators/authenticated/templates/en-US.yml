@@ -37,6 +37,7 @@ en-US:
   create_account : "Create account"
   email : "Email"
   log_in : "Log In"
+  log_out : "Log Out"
   logged_in : "Logged in successfully"
   logged_in_as : "Logged in as {{login}}"
   logged_out : "You have been logged out."
