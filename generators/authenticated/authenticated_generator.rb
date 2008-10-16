@@ -230,6 +230,10 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
                             'locales',
                             'en-US.yml')
 
+      m.template 'de-DE.yml',
+                  File.join('config',
+                            'locales',
+                            'de-DE.yml')
 
       # Controller templates
       m.template 'login.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "new.html.erb")
