@@ -37,6 +37,7 @@ de-DE:
   create_account : "Zugang erstellen"
   email : "E-Mail"
   log_in : "Anmelden"
+  log_out : "Abmelden"
   logged_in : "Anmeldung erfolgreich"
   logged_in_as : "Angemeldet als {{login}}."
   logged_out : "Sie haben sich abgemeldet."
