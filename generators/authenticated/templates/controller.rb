@@ -1,14 +1,12 @@
 # This controller handles the login/logout function of the site.  
 class <%= controller_class_name %>Controller < ApplicationController
-  # Be sure to include AuthenticationSystem in Application Controller instead
+  # Be sure to include AuthenticationSystem and localizate in Application Controller instead
   include AuthenticatedSystem
   
   before_filter :localizate
   
   def localizate
-    locale = params[:locale] || 'en-US'
-    I18n.locale = locale
-    I18n.load_path = "config/locales/#{locale}.yml"
+    I18n.locale = params[:locale] || I18n.default_locale
   end
 
   # render new.rhtml

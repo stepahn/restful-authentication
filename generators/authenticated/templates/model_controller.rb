@@ -9,9 +9,7 @@ class <%= model_controller_class_name %>Controller < ApplicationController
   before_filter :localizate
   <% end %>
   def localizate
-    locale = params[:locale] || 'en-US'
-    I18n.locale = locale
-    I18n.load_path = "config/locales/#{locale}.yml"
+    I18n.locale = params[:locale] || I18n.default_locale
   end
 
   # render new.rhtml
