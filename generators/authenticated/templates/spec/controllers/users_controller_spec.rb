@@ -108,14 +108,14 @@ describe <%= model_controller_class_name %>Controller do
       I18n.should_receive(:t).with(:bogus_activation_code, :model => 'user').and_return(msg)
       get :activate, :activation_code => 'i_haxxor_joo'
       flash[:error].should eql(msg)
-  end<% end %>
+  end
   
   it "localizates signup with activation message" do
     msg = "Sign up is complete jo!"
     I18n.should_receive(:t).with(:signup_complete_with_activation).and_return(msg)
     create_<%= file_name %>
     flash[:notice].should eql(msg)
-  end
+  end<% end %>
   
   it "localizates" do
     locale = "pt-BR"
