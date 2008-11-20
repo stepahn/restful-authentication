@@ -34,7 +34,7 @@ class <%= model_controller_class_name %>Controller < ApplicationController
       # reset session
       self.current_<%= file_name %> = @<%= file_name %> # !! now logged in
       <% end -%>redirect_back_or_default('/')
-      flash[:notice] = I18n.t(:signup_complete_with_activation)
+      flash[:notice] = I18n.t(:signup_complete)
     else
       flash[:error]  = I18n.t(:signup_problem)
       render :action => 'new'
@@ -47,7 +47,7 @@ class <%= model_controller_class_name %>Controller < ApplicationController
     case
     when (!params[:activation_code].blank?) && <%= file_name %> && !<%= file_name %>.active?
       <%= file_name %>.activate!
-      flash[:notice] = I18n.t(:signup_complete)
+      flash[:notice] = I18n.t(:signup_complete_with_activation)
       redirect_to '/login'
     when params[:activation_code].blank?
       flash[:error] = I18n.t(:blank_activation_code)
