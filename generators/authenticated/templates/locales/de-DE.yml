@@ -49,6 +49,7 @@ de-DE:
   password_confirmation : "Passwortbestätigung"
   remember_me : "Passwort merken"
   sign_up : "Registrieren"
-  signup_complete : "Registrierung abgeschlossen. Bitte melden Sie sich nun an!"
+  signup_complete : "Registrierung abgeschlossen"
+  signup_complete_and_do_login : "Registrierung abgeschlossen. Bitte melden Sie sich nun an!"
   signup_complete_with_activation : "Vielen Dank für die Registrierung! Wir haben Ihnen den Aktivierungsschlüssel per E-Mail zugesandt."
   signup_problem : "Es tut uns Leid - Ihr Zugang konnte momentan nicht eingerichtet werden. Bitte versuchen Sie es später noch einmal oder kontaktieren Sie den Administrator."

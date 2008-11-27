@@ -51,7 +51,7 @@ class <%= model_controller_class_name %>Controller < ApplicationController
     case
     when (!params[:activation_code].blank?) && <%= file_name %> && !<%= file_name %>.active?
       <%= file_name %>.activate!
-      flash[:notice] = I18n.t(:signup_complete)
+      flash[:notice] = I18n.t(:signup_complete_and_do_login)
       redirect_to '/login'
     when params[:activation_code].blank?
       flash[:error] = I18n.t(:blank_activation_code)

@@ -72,7 +72,7 @@ describe <%= model_controller_class_name %>Controller do
   
   it 'localizates signup message' do
     msg = "Sign up is complete jo!"
-    I18n.should_receive(:t).with(:signup_complete).and_return(msg)
+    I18n.should_receive(:t).with(:signup_complete_and_do_login).and_return(msg)
     <%= class_name %>.authenticate('aaron', 'monkey').should be_nil
     get :activate, :activation_code => <%= table_name %>(:aaron).activation_code
     flash[:notice].should eql(msg)

@@ -49,6 +49,7 @@ en-US:
   password_confirmation : "Confirm Password"
   remember_me : "Remember me"
   sign_up : "Sign up"
-  signup_complete : "Signup complete! Please sign in to continue."
+  signup_complete : "Signup complete!"
+  signup_complete_and_do_login : "Signup complete! Please sign in to continue."
   signup_complete_with_activation : "Thanks for signing up!  We're sending you an email with your activation code."
   signup_problem : "We couldn't set up that account, sorry.  Please try again, or contact an admin (link is above)."
