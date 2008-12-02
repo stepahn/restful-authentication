@@ -110,11 +110,10 @@ By default, email and usernames are validated against a somewhat strict pattern;
 h2. Installation
 
 This is a basic restful authentication generator for rails, taken from
-acts as authenticated.  Currently it requires Rails 1.2.6 or above.
+acts as authenticated.  Currently it requires Rails 2.2 or above.
 
-**IMPORTANT FOR RAILS > 2.1 USERS** To avoid a @NameError@ exception ("lighthouse tracker ticket":http://rails_security.lighthouseapp.com/projects/15332-restful_authentication/tickets/2-not-a-valid-constant-name-errors#ticket-2-2), check out the code to have an _underscore_ and not _dash_ in its name: 
-* either use <code>git clone git://github.com/technoweenie/restful-authentication.git restful_authentication</code> 
-* or rename the plugin's directory to be <code>restful_authentication</code> after fetching it.
+**IMPORTANT** To avoid a @NameError@ exception ("lighthouse tracker ticket":http://rails_security.lighthouseapp.com/projects/15332-restful_authentication/tickets/2-not-a-valid-constant-name-errors#ticket-2-2), check out the code to have an _underscore_ and not _dash_ in its name: 
+* <code>git submodule add git@github.com:dcrec1/restful-authentication-i18n.git vendor/plugins/restful_authentication_i18n</code> 
 
 To use the generator:
 

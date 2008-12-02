@@ -1,21 +1,21 @@
-<h1>Log In</h1>
+<h1><%%= I18n.t(:log_in) %></h1>
 
 <%% form_tag <%= controller_routing_name %>_path do -%>
 <% if options[:email_as_login] -%>
-<p><%%= label_tag 'Email' %><br />
+<p><%%= label_tag 'Email', I18n.t(:email) %><br />
 <%%= text_field_tag 'email', @email %></p>
 <% else -%>
-<p><%%= label_tag 'login' %><br />
+<p><%%= label_tag 'login', I18n.t(:login) %><br />
 <%%= text_field_tag 'login', @login %></p>
 <% end -%>
 
-<p><%%= label_tag 'password' %><br/>
+<p><%%= label_tag 'password', I18n.t(:password) %><br/>
 <%%= password_field_tag 'password', nil %></p>
 
 <!-- Uncomment this if you want this functionality
-<p><%%= label_tag 'remember_me', 'Remember me' %>
+<p><%%= label_tag 'remember_me', I18n.t(:remember_me) %>
 <%%= check_box_tag 'remember_me', '1', @remember_me %></p>
 -->
 
-<p><%%= submit_tag 'Log in' %></p>
+<p><%%= submit_tag I18n.t(:log_in) %></p>
 <%% end -%>

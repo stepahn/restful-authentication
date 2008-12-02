@@ -1,11 +1,16 @@
 class <%= model_controller_class_name %>Controller < ApplicationController
-  # Be sure to include AuthenticationSystem in Application Controller instead
+  # Be sure to include AuthenticationSystem and localizate in Application Controller instead
   include AuthenticatedSystem
   <% if options[:stateful] %>
   # Protect these actions behind an admin login
   # before_filter :admin_required, :only => [:suspend, :unsuspend, :destroy, :purge]
-  before_filter :find_<%= file_name %>, :only => [:suspend, :unsuspend, :destroy, :purge]
+  before_filter :localizate, :find_<%= file_name %>, :only => [:suspend, :unsuspend, :destroy, :purge]
+  <% else %>
+  before_filter :localizate
   <% end %>
+  def localizate
+    I18n.locale = params[:locale] || I18n.default_locale
+  end
 
   # render new.rhtml
   def new
@@ -29,9 +34,13 @@ class <%= model_controller_class_name %>Controller < ApplicationController
       # reset session
       self.current_<%= file_name %> = @<%= file_name %> # !! now logged in
       <% end -%>redirect_back_or_default('/')
-      flash[:notice] = "Thanks for signing up!  We're sending you an email with your activation code."
+      <% if options[:include_activation] -%>
+        flash[:notice] = I18n.t(:signup_complete_with_activation)
+      <% else -%>
+        flash[:notice] = I18n.t(:signup_complete)
+      <% end %>
     else
-      flash[:error]  = "We couldn't set up that account, sorry.  Please try again, or contact an admin (link is above)."
+      flash[:error]  = I18n.t(:signup_problem)
       render :action => 'new'
     end
   end
@@ -42,13 +51,13 @@ class <%= model_controller_class_name %>Controller < ApplicationController
     case
     when (!params[:activation_code].blank?) && <%= file_name %> && !<%= file_name %>.active?
       <%= file_name %>.activate!
-      flash[:notice] = "Signup complete! Please sign in to continue."
+      flash[:notice] = I18n.t(:signup_complete_and_do_login)
       redirect_to '/login'
     when params[:activation_code].blank?
-      flash[:error] = "The activation code was missing.  Please follow the URL from your email."
+      flash[:error] = I18n.t(:blank_activation_code)
       redirect_back_or_default('/')
     else 
-      flash[:error]  = "We couldn't find a <%= file_name %> with that activation code -- check your email? Or maybe you've already activated -- try signing in."
+      flash[:error]  = I18n.t(:bogus_activation_code, :model => '<%= file_name %>')
       redirect_back_or_default('/')
     end
   end

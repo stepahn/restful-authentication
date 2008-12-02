@@ -83,7 +83,7 @@ module <%= model_controller_class_name %>Helper
     if current_<%= file_name %>
       link_to_<%= file_name %> current_<%= file_name %>, options
     else
-      content_text = options.delete(:content_text) || 'not signed in'
+      content_text = options.delete(:content_text) || I18n.t(:not_signed_in)
       # kill ignored options from link_to_<%= file_name %>
       [:content_method, :title_method].each{|opt| options.delete(opt)} 
       link_to_login_with_IP content_text, options

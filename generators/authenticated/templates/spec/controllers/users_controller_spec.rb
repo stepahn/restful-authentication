@@ -72,6 +72,21 @@ describe <%= model_controller_class_name %>Controller do
     <%= class_name %>.authenticate('<%= options[:email_as_login] ? "aaron@example.com" : "aaron" %>', 'monkey').should == <%= table_name %>(:aaron)
   end
   
+  it 'localizates signup message' do
+    msg = "Sign up is complete jo!"
+    I18n.should_receive(:t).with(:signup_complete_and_do_login).and_return(msg)
+    <%= class_name %>.authenticate('aaron', 'monkey').should be_nil
+    get :activate, :activation_code => <%= table_name %>(:aaron).activation_code
+    flash[:notice].should eql(msg)
+  end
+  
+  it 'localizates blank activation code message' do
+      msg = "Missing activation code"
+      I18n.should_receive(:t).with(:blank_activation_code).and_return(msg)
+      get :activate
+      flash[:error].should eql(msg)
+  end
+  
   it 'does not activate user without key' do
     get :activate
     flash[:notice].should     be_nil
@@ -88,12 +103,33 @@ describe <%= model_controller_class_name %>Controller do
     get :activate, :activation_code => 'i_haxxor_joo'
     flash[:notice].should     be_nil
     flash[:error ].should_not be_nil
+  end
+  
+  it 'localizates bogus activation code message' do
+      msg = "Bogus activation code"
+      I18n.should_receive(:t).with(:bogus_activation_code, :model => 'user').and_return(msg)
+      get :activate, :activation_code => 'i_haxxor_joo'
+      flash[:error].should eql(msg)
+  end
+  
+  it "localizates signup with activation message" do
+    msg = "Sign up is complete jo!"
+    I18n.should_receive(:t).with(:signup_complete_with_activation).and_return(msg)
+    create_<%= file_name %>
+    flash[:notice].should eql(msg)
   end<% end %>
+  
+  it "localizates" do
+    locale = "pt-BR"
+    get :new, :locale => locale
+    I18n.locale.should eql(locale)
+  end
   
   def create_<%= file_name %>(options = {})
     post :create, :<%= file_name %> => { <% unless options[:email_as_login] -%>:login => 'quire', <% end -%>:email => 'quire@example.com',
       :password => 'quire69', :password_confirmation => 'quire69' }.merge(options)
   end
+  
 end
 
 describe <%= model_controller_class_name %>Controller do

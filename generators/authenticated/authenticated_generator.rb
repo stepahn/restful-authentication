@@ -42,6 +42,9 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
     @rspec = has_rspec?
 
     @controller_name = (args.shift || 'sessions').pluralize
+ 
+    $rest_auth_default_locale = (args[0] || 'en-US')
+ 
     @model_controller_name = @name.pluralize
 
     # sessions controller
@@ -99,6 +102,7 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
       m.directory File.join('app/helpers', model_controller_class_path)
       m.directory File.join('app/views', model_controller_class_path, model_controller_file_name)
       m.directory File.join('config/initializers')
+      m.directory File.join('config/locales')
 
       if @rspec
         m.directory File.join('spec/controllers', controller_class_path)
@@ -146,6 +150,8 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
 
       m.template 'site_keys.rb', site_keys_file
 
+      m.template 'i18n.rb', File.join('config', 'initializers', 'i18n.rb')
+
       if @rspec
         # RSpec Specs
         m.template  'spec/controllers/users_controller_spec.rb',
@@ -172,6 +178,10 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
                     File.join('spec/models',
                               class_path,
                               "#{file_name}_spec.rb")
+        m.template  'spec/models/i18n_spec.rb',
+                    File.join('spec/models',
+                              class_path,
+                              "i18n_spec.rb")
         m.template 'spec/fixtures/users.yml',
                     File.join('spec/fixtures',
                                class_path,
@@ -226,7 +236,14 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
                   File.join('app/helpers',
                             model_controller_class_path,
                             "#{model_controller_file_name}_helper.rb")
-
+                            
+      ['en-US', 'de-DE'].each do |x|
+        name = "#{x}.yml"
+        m.template "locales/#{name}",
+                    File.join('config',
+                              'locales',
+                              name)
+      end
 
       # Controller templates
       m.template 'login.html.erb',  File.join('app/views', controller_class_path, controller_file_name, "new.html.erb")
@@ -353,8 +370,7 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
   end
 
   def has_rspec?
-    spec_dir = File.join(RAILS_ROOT, 'spec')
-    options[:rspec] ||= (File.exist?(spec_dir) && File.directory?(spec_dir)) unless (options[:rspec] == false)
+    true unless (options[:rspec] == false)
   end
 
   #
@@ -404,7 +420,7 @@ class AuthenticatedGenerator < Rails::Generator::NamedBase
 protected
   # Override with your own usage banner.
   def banner
-    "Usage: #{$0} authenticated ModelName [ControllerName]"
+    "Usage: #{$0} authenticated ModelName [ControllerName [DefaultLocale]]"
   end
 
   def add_options!(opt)
